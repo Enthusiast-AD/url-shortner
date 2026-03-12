@@ -1,3 +1,4 @@
+import path from "path";
 import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
@@ -67,7 +68,7 @@ const redirectUrl = asyncHandler(async (req, res) => {
     const urlDoc = await Url.findOne({ shortId });
 
     if (!urlDoc) {
-        throw new ApiError(404, "URL not found");
+        return res.status(404).sendFile('not-found.html', { root: 'public' });
     }
 
     // Async update clicks (don't await if performance is critical, but good for data integrity)
