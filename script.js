@@ -165,8 +165,60 @@ function loadHistory() {
         row.appendChild(shortCell);
         row.appendChild(originalCell);
         row.appendChild(dateCell);
+
+        // Actions cell
+        const actionsCell = document.createElement("td");
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.classList.add("delete-btn");
+        deleteBtn.style.backgroundColor = "#ef4444";
+        deleteBtn.style.color = "white";
+        deleteBtn.style.border = "none";
+        deleteBtn.style.padding = "4px 8px";
+        deleteBtn.style.borderRadius = "4px";
+        deleteBtn.style.cursor = "pointer";
+        deleteBtn.style.fontSize = "0.85rem";
+
+        deleteBtn.addEventListener("click", async () => {
+            const confirmDelete = confirm("Are you sure you want to delete this URL permanently?");
+            if (!confirmDelete) return;
+
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = "Deleting...";
+
+            try {
+                // Determine API DELETE URL
+                const deleteApiUrl = `${API_BASE}/api/v1/url/${entry.shortId}`;
+                
+                const response = await fetch(deleteApiUrl, {
+                    method: "DELETE"
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to delete from server");
+                }
+
+                // Remove from local storage history
+                removeFromHistory(entry.shortId);
+            } catch (err) {
+                alert(err.message);
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = "Delete";
+            }
+        });
+
+        actionsCell.appendChild(deleteBtn);
+        row.appendChild(actionsCell);
+
         historyBody.appendChild(row);
     });
+}
+
+function removeFromHistory(shortId) {
+    let history = getHistory();
+    history = history.filter(entry => entry.shortId !== shortId);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    loadHistory();
 }
 
 // UI Helpers 
