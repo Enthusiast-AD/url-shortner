@@ -110,4 +110,28 @@ function isValidUrl(string) {
     }
 }
 
-export { shortenUrl, redirectUrl };
+/**
+ * Controller to delete a URL
+ * @route DELETE /api/v1/url/:shortId
+ */
+const deleteUrl = asyncHandler(async (req, res) => {
+    const { shortId } = req.params;
+
+    if (!shortId) {
+        throw new ApiError(400, "Short ID is required");
+    }
+
+    const deletedUrl = await Url.findOneAndDelete({ shortId });
+
+    if (!deletedUrl) {
+        throw new ApiError(404, "URL not found");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, {}, "URL deleted successfully")
+        );
+});
+
+export { shortenUrl, redirectUrl, deleteUrl };
