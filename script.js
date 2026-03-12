@@ -1,4 +1,4 @@
-const API_BASE = "https://url-shortner-po28.onrender.com"; 
+const API_BASE = "https://url.orbina.net"; 
 const API_URL = `${API_BASE}/api/v1/url/shorten`;
 
 const form = document.getElementById("shorten-form");
